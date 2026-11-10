@@ -1,0 +1,17 @@
+﻿[HttpGet]
+public async Task<IActionResult>
+    Edit(int id)
+    {
+    if (HttpContext.Session.GetString("Role") != "Organiser")
+    return RedirectToAction("Login", "Account");
+
+    var eventItem = await _eventService.GetEventAsync(id);
+
+    if (eventItem == null)
+    {
+    TempData["ErrorMessage"] = "Event could not be found.";
+    return RedirectToAction("Index");
+    }
+
+    return View("Edit", eventItem.Value);
+    }

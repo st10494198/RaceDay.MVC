@@ -1,0 +1,98 @@
+﻿@model System.Text.Json.JsonElement?
+
+@{
+    ViewData["Title"] = "Manage Events";
+}
+
+<div class="container mt-5">
+    <h1 class="fw-bold mb-3">Manage Events</h1>
+
+    <p class="text-muted">
+        View and manage your RaceDay events below.
+    </p>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <a asp-controller="OrganiserEvents"
+       asp-action="Create"
+       class="btn btn-primary mb-4">
+        Create New Event
+    </a>
+
+    @if (!Model.HasValue ||
+        Model.Value.ValueKind != System.Text.Json.JsonValueKind.Array ||
+        Model.Value.GetArrayLength() == 0)
+    {
+        <div class="alert alert-info">
+            No events are available.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th>Event ID</th>
+                        <th>Event Name</th>
+                        <th>Event Date</th>
+                        <th>Location</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model.Value.EnumerateArray())
+                    {
+                        <tr>
+                            <td>@item.GetProperty("eventID")</td>
+                            <td>@item.GetProperty("eventName")</td>
+                            <td>
+                                @item.GetProperty("eventDate").GetDateTime().ToString("dd MMM yyyy")
+                            </td>
+                            <td>@item.GetProperty("location")</td>
+                            <td>@item.GetProperty("description")</td>
+
+                            <td>
+                                <a asp-controller="OrganiserEvents"
+                                   asp-action="Edit"
+                                   asp-route-id="@item.GetProperty("eventID").GetInt32()"
+                                   class="btn btn-warning btn-sm mb-1">
+                                    Edit
+                                </a>
+
+                                <form asp-controller="OrganiserEvents"
+                                      asp-action="Delete"
+                                      asp-route-id="@item.GetProperty("eventID").GetInt32()"
+                                      method="post"
+                                      style="display:inline;"
+                                      onsubmit="return confirm('Are you sure you want to delete this event?');">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <button type="submit"
+                                            class="btn btn-danger btn-sm mb-1">
+                                        Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

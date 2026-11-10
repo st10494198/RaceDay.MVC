@@ -1,0 +1,75 @@
+﻿@using System.Text.Json
+@model JsonElement?
+
+@{
+    ViewData["Title"] = "My Results";
+}
+
+<div class="container mt-4 mb-5">
+
+    <h1 class="fw-bold mb-2">My Race Results</h1>
+
+    <p class="text-muted mb-4">
+        View your sporting event results.
+    </p>
+
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger">
+            @ViewBag.ErrorMessage
+        </div>
+    }
+    else if (Model.HasValue &&
+    Model.Value.ValueKind == JsonValueKind.Array &&
+    Model.Value.GetArrayLength() > 0)
+    {
+        <div class="row g-4">
+
+            @foreach (var result in Model.Value.EnumerateArray())
+            {
+                <div class="col-md-6 col-lg-4">
+
+                    <div class="card shadow-sm border-0 h-100">
+
+                        <div class="card-body p-4">
+
+                            <span class="badge bg-success mb-3">
+                                Result Available
+                            </span>
+
+                            <h4 class="fw-bold">
+                                Race Result
+                            </h4>
+
+                            @foreach (var property in result.EnumerateObject())
+                            {
+                                <p class="text-muted mb-2">
+                                    <strong>@property.Name:</strong>
+                                    @property.Value.ToString()
+                                </p>
+                            }
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            No race results are currently available.
+            Your results will appear here once they have been recorded.
+        </div>
+    }
+
+    <a asp-controller="Participant"
+       asp-action="Index"
+       class="btn btn-primary mt-3">
+        Back to Dashboard
+    </a>
+
+</div>

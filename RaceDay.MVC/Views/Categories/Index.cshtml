@@ -1,0 +1,90 @@
+﻿@using System.Text.Json
+@model JsonElement?
+
+@{
+    ViewData["Title"] = "Browse Categories";
+}
+
+<div class="container mt-4 mb-5">
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["SuccessMessage"]
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+        </div>
+    }
+
+    <h1 class="fw-bold">Browse Race Categories</h1>
+
+    <p class="text-muted mb-4">
+        Choose an event category that matches your fitness goals.
+    </p>
+
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger">
+            @ViewBag.ErrorMessage
+        </div>
+    }
+    else if (Model.HasValue && Model.Value.ValueKind == JsonValueKind.Array)
+    {
+        <div class="row g-4">
+
+            @foreach (var category in Model.Value.EnumerateArray())
+            {
+                var categoryId = category.GetProperty("categoryID").GetInt32();
+                var categoryName = category.GetProperty("categoryName").GetString();
+                var distance = category.GetProperty("distance").GetDecimal();
+                var eventId = category.GetProperty("eventID").GetInt32();
+
+                <div class="col-md-6 col-lg-4">
+
+                    <div class="card h-100 shadow-sm border-0">
+
+                        <div class="card-body p-4">
+
+                            <span class="badge bg-primary mb-3">
+                                Category #@categoryId
+                            </span>
+
+                            <h4 class="fw-bold">
+                                @categoryName
+                            </h4>
+
+                            <p class="text-muted">
+                                Distance: @distance km
+                            </p>
+
+                            <p class="text-muted">
+                                Event ID: @eventId
+                            </p>
+
+                            <a asp-controller="Enrolments"
+                               asp-action="Create"
+                               asp-route-categoryId="@categoryId"
+                               class="btn btn-primary w-100">
+                                Select Category
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            No categories are currently available.
+        </div>
+    }
+
+</div>

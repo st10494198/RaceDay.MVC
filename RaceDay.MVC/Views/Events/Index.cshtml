@@ -1,0 +1,113 @@
+﻿@using System.Text.Json
+@model JsonElement?
+
+@{
+    ViewData["Title"] = "Browse Events";
+}
+
+<div class="container mt-4 mb-5">
+
+    <div class="mb-4">
+        <h1 class="fw-bold">Upcoming RaceDay Events</h1>
+        <p class="text-muted">
+            Discover running, walking and cycling events and find your next challenge.
+        </p>
+    </div>
+
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger">
+            @ViewBag.ErrorMessage
+        </div>
+    }
+    else if (Model.HasValue && Model.Value.ValueKind == JsonValueKind.Array)
+    {
+        if (Model.Value.GetArrayLength() == 0)
+        {
+            <div class="alert alert-info">
+                No events are currently available.
+            </div>
+        }
+        else
+        {
+            <div class="row g-4">
+
+                @foreach (var item in Model.Value.EnumerateArray())
+                {
+                    var eventName = item.TryGetProperty("eventName", out var name)
+                    ? name.ToString()
+                    : "RaceDay Event";
+
+                    var description = item.TryGetProperty("description", out var desc)
+                    ? desc.ToString()
+                    : "Join this exciting sporting event.";
+
+                    var location = item.TryGetProperty("location", out var loc)
+                    ? loc.ToString()
+                    : "Location not specified";
+
+                    var dateText = item.TryGetProperty("eventDate", out var date)
+                    ? date.ToString()
+                    : "";
+
+                    var formattedDate = "Date not specified";
+
+                    if (DateTime.TryParse(dateText, out var parsedDate))
+                    {
+                        formattedDate = parsedDate.ToString("dd MMMM yyyy");
+                    }
+
+                    <div class="col-md-6 col-lg-4">
+
+                        <div class="card h-100 shadow-sm border-0">
+
+                            <div class="card-body p-4">
+
+                                <span class="badge bg-primary mb-3">
+                                    RaceDay Event
+                                </span>
+
+                                <h4 class="card-title fw-bold">
+                                    @eventName
+                                </h4>
+
+                                <p class="card-text text-muted">
+                                    @description
+                                </p>
+
+                                <hr />
+
+                                <p class="mb-2">
+                                    <strong>Location:</strong><br />
+                                    <span class="text-muted">@location</span>
+                                </p>
+
+                                <p class="mb-0">
+                                    <strong>Event Date:</strong><br />
+                                    <span class="text-muted">@formattedDate</span>
+                                </p>
+
+                            </div>
+
+                            <div class="card-footer bg-white border-0 p-4 pt-0">
+                                <span class="text-primary fw-semibold">
+                                    Run. Walk. Cycle.
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+        }
+    }
+    else
+    {
+        <div class="alert alert-info">
+            No event information is available yet.
+        </div>
+    }
+
+</div>

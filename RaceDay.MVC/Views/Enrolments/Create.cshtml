@@ -1,0 +1,89 @@
+﻿@{
+    ViewData["Title"] = "Enter Race Category";
+}
+
+<div class="container mt-5 mb-5">
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body p-4">
+
+                    <h2 class="fw-bold mb-3">
+                        Enter Race Category
+                    </h2>
+
+                    <p class="text-muted">
+                        Complete the form below to enter your selected race category.
+                    </p>
+
+                    @if (ViewBag.ErrorMessage != null)
+                    {
+                        <div class="alert alert-danger">
+                            @ViewBag.ErrorMessage
+                        </div>
+                    }
+
+                    <form asp-controller="Enrolments"
+                          asp-action="Create"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="categoryId"
+                               value="@ViewBag.CategoryId" />
+
+                        <div class="mb-3">
+
+                            <label class="form-label fw-semibold">
+                                Category ID
+                            </label>
+
+                            <input type="text"
+                                   class="form-control"
+                                   value="@ViewBag.CategoryId"
+                                   readonly />
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label for="raceNumber"
+                                   class="form-label fw-semibold">
+                                Race Number
+                            </label>
+
+                            <input type="number"
+                                   id="raceNumber"
+                                   name="raceNumber"
+                                   class="form-control"
+                                   min="1"
+                                   required
+                                   placeholder="Enter your race number" />
+
+                        </div>
+
+                        <button type="submit"
+                                class="btn btn-primary w-100">
+                            Confirm Enrolment
+                        </button>
+
+                    </form>
+
+                    <a asp-controller="Categories"
+                       asp-action="Index"
+                       class="btn btn-outline-secondary w-100 mt-3">
+                        Back to Categories
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>

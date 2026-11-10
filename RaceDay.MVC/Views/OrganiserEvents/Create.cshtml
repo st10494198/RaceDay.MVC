@@ -1,0 +1,78 @@
+﻿@{
+    ViewData["Title"] = "Create New Event";
+}
+
+<div class="container mt-4">
+    <h2>Create New Event</h2>
+    <p>Enter the details of your new RaceDay event.</p>
+
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger">
+            @ViewBag.ErrorMessage
+        </div>
+    }
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <form asp-controller="OrganiserEvents"
+          asp-action="Create"
+          method="post">
+
+        @Html.AntiForgeryToken()
+
+        <div class="mb-3">
+            <label for="EventName" class="form-label">Event Name</label>
+            <input id="EventName"
+                   name="EventName"
+                   type="text"
+                   class="form-control"
+                   placeholder="Enter event name"
+                   required />
+        </div>
+
+        <div class="mb-3">
+            <label for="EventDate" class="form-label">Event Date</label>
+            <input id="EventDate"
+                   name="EventDate"
+                   type="date"
+                   class="form-control"
+                   required />
+        </div>
+
+        <div class="mb-3">
+            <label for="Location" class="form-label">Location</label>
+            <input id="Location"
+                   name="Location"
+                   type="text"
+                   class="form-control"
+                   placeholder="Enter event location"
+                   required />
+        </div>
+
+        <div class="mb-3">
+            <label for="Description" class="form-label">Description</label>
+            <textarea id="Description"
+                      name="Description"
+                      class="form-control"
+                      rows="4"
+                      placeholder="Describe the event"
+                      required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Create Event
+        </button>
+
+        <a asp-controller="OrganiserEvents"
+           asp-action="Index"
+           class="btn btn-secondary">
+            Cancel
+        </a>
+    </form>
+</div>
